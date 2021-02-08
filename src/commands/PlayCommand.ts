@@ -84,7 +84,7 @@ export class PlayCommand extends BaseCommand {
         } catch (e) {
             try {
                 const videos = await this.client.youtube.searchVideos(searchString, this.client.config.searchMaxResults);
-                if (videos.length === 0) return message.channel.send(createEmbed("error", "I can't obtain any search results"));
+                if (videos.length === 0) return message.channel.send(createEmbed("錯誤", "我無法找到"));
                 if (this.client.config.disableSongSelection) { video = await this.client.youtube.getVideo(videos[0].id); } else {
                     let index = 0;
                     const msg = await message.channel.send(new MessageEmbed()
@@ -92,7 +92,7 @@ export class PlayCommand extends BaseCommand {
                         .setAuthor("Music Selection", message.client.user?.displayAvatarURL() as string)
                         .setDescription(`\`\`\`\n${videos.map(video => `${++index} - ${this.cleanTitle(video.title)}`).join("\n")}\`\`\`\n` +
                         `Please select the results that ranging **\`1-${this.client.config.searchMaxResults}\`**`)
-                        .setFooter("• Type cancel or c to cancel the music selection"));
+                        .setFooter("• 輸入C取消播放！"));
                     try {
                     // eslint-disable-next-line no-var
                         var response = await message.channel.awaitMessages((msg2: IMessage) => {
