@@ -84,7 +84,7 @@ export class PlayCommand extends BaseCommand {
         } catch (e) {
             try {
                 const videos = await this.client.youtube.searchVideos(searchString, this.client.config.searchMaxResults);
-                if (videos.length === 0) return message.channel.send(createEmbed("錯誤", "我無法找到"));
+                if (videos.length === 0) return message.channel.send(createEmbed("錯誤", "我無法找到任何結果。"));
                 if (this.client.config.disableSongSelection) { video = await this.client.youtube.getVideo(videos[0].id); } else {
                     let index = 0;
                     const msg = await message.channel.send(new MessageEmbed()
@@ -98,7 +98,7 @@ export class PlayCommand extends BaseCommand {
                         var response = await message.channel.awaitMessages((msg2: IMessage) => {
                             if (message.author.id !== msg2.author.id) return false;
 
-                            if (msg2.content === "cancel" || msg2.content === "c") return true;
+                            if (msg2.content === "取消" || msg2.content === "c") return true;
                             return Number(msg2.content) > 0 && Number(msg2.content) < 13;
                         }, {
                             max: 1,
@@ -112,7 +112,7 @@ export class PlayCommand extends BaseCommand {
                         return message.channel.send(createEmbed("error", "No or invalid value entered, the music selection has been canceled"));
                     }
                     if (response.first()?.content === "c" || response.first()?.content === "cancel") {
-                        return message.channel.send(createEmbed("warn", "The music selection has been canceled"));
+                        return message.channel.send(createEmbed("注意", "播放被取消了"));
                     }
                     const videoIndex = parseInt(response.first()?.content as string, 10);
                     video = await this.client.youtube.getVideo(videos[videoIndex - 1].id);
@@ -179,7 +179,7 @@ export class PlayCommand extends BaseCommand {
             if (serverQueue.lastMusicMessageID !== null) serverQueue.textChannel?.messages.fetch(serverQueue.lastMusicMessageID, false).then(m => m.delete()).catch(e => this.client.logger.error("PLAY_ERR:", e));
             if (serverQueue.lastVoiceStateUpdateMessageID !== null) serverQueue.textChannel?.messages.fetch(serverQueue.lastVoiceStateUpdateMessageID, false).then(m => m.delete()).catch(e => this.client.logger.error("PLAY_ERR:", e));
             serverQueue.textChannel?.send(
-                createEmbed("info", `⏹  **|**  The queue has finished, use **\`${guild.client.config.prefix}play\`** again to play more music`)
+                createEmbed("info", `⏹  **|**  清單播放完畢，使用 **\`${guild.client.config.prefix}play\`** again to play more music`)
             ).catch(e => this.client.logger.error("PLAY_ERR:", e));
             serverQueue.connection?.disconnect();
             return guild.queue = null;
